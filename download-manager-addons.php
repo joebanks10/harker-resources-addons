@@ -46,7 +46,8 @@ function hkr_wpdm_datatable_src(){
 
         $output[] = array(
             'Title' => get_permalink( $download->ID ) . '||' . $download->post_title,
-            'Categories' => hkr_wpdm_get_categories( $download->ID, array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ),
+            'Categories' => hkr_wpdm_get_term_names( $download->ID, array('wpdmcategory'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ),
+            'Tags' => hkr_wpdm_get_term_names( $download->ID, array('post_tag') ),
             'Last Modified' => $download->post_modified,
             'Download' => $download_link
         );
@@ -64,13 +65,13 @@ function hkr_wpdm_get_download_url( $id ) {
     return $download_link;
 }
 
-function hkr_wpdm_get_categories( $id, $exclude = array() ) {
-    $categories = wp_get_post_terms( $id, array('wpdmcategory', 'post_tag'), array('fields' => 'names') );
-    $categories = array_filter( $categories, function($val) use ($exclude) {
+function hkr_wpdm_get_term_names( $id, $taxonomy, $exclude = array() ) {
+    $terms = wp_get_post_terms( $id, $taxonomy, array('fields' => 'names') );
+    $terms = array_filter( $terms, function($val) use ($exclude) {
         return ( ! in_array($val, $exclude) );
     });
 
-    return join( ', ', $categories );
+    return join( ', ', $terms );
 }
 
 /* Preview File Link */
