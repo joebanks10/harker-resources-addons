@@ -1,0 +1,31 @@
+.wpDataTables table.wpDataTable thead tr th {
+    font-family: "droid-serif", Georgia, serif;
+    font-weight: normal;
+}
+
+.wpDataTables table.wpDataTable tr td {
+    font-family: "droid-sans", "Arial", sans-serif;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.wpDataTable td, .wpDataTable th {
+    font-size: 13px;
+}
+
+.wpDataTable tbody td:first-child {
+    font-size: 14px;
+}
+
+.wpDataTable tbody a {
+    text-decoration: none;
+}
+
+.wpDataTable tbody a:hover {
+    text-decoration: underline;
+}
+
+.wpDataTable tbody td:first-child a {
+    font-weight: bold;
+    color: #333;
+}

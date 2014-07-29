@@ -15,30 +15,34 @@ function hkr_wpdm_activate() {
     // do something
 }
 
+add_action( 'wp_enqueue_scripts', 'hkr_wpdm_enqueue' );
+
+function hkr_wpdm_enqueue() {
+    wp_enqueue_style( 'hkr-wpdm-style', plugins_url('css/style.css', __FILE__) );
+}
+
 add_action('template_redirect', 'hkr_wpdm_datatable_src');
 
+// creates file with a serialized array that contains the data for wpDataTables
 function hkr_wpdm_datatable_src(){
-    // creates file with a serialized array that contains the data for wpDataTables
-    if( isset($_GET['division']) ) {
+
+    // get requested category
+    if( isset($_GET['category']) ) {
         $categories = get_terms( array('wpdmcategory') );
         $category_slugs = array_map( function($term) {
             return $term->slug;
         }, $categories );
-        $key = array_search( $_GET['division'], $category_slugs, true );
+        $key = array_search( $_GET['category'], $category_slugs, true );
         $category_slug = ( $key !== false ) ? $category_slugs[$key] : '';
     }
+
+    // query data
     $downloads = get_posts( array( "posts_per_page" => -1, "post_type" => "wpdmpro", "wpdmcategory" => $category_slug ) );
 
     $output = array();
     foreach( $downloads as $download ) {
-        // get download url
-        $download_link = wpdm_get_download_link( $download->ID );
-        preg_match( '/href=\'(.*?)\'/', $download_link, $match);
-        if ( isset($match[1]) ) {
-            $download_link = $match[1].'||Download';
-        } else {
-            $download_link = 'Not available';
-        }
+        $url = hkr_wpdm_get_download_url( $download->ID );
+        $download_link = ( empty($url) ) ? '||Expired' : $url . '||Download';
 
         $output[] = array(
             'Title' => get_permalink( $download->ID ) . '||' . $download->post_title,
@@ -52,8 +56,23 @@ function hkr_wpdm_datatable_src(){
     @file_put_contents( plugin_dir_path( __FILE__ ) . 'data.php', $output );
 }
 
+function hkr_wpdm_get_download_url( $id ) {
+    $download_link = wpdm_get_download_link( $id );
+    preg_match( '/href=\'(.*?)\'/', $download_link, $match);
+    $download_link = ( isset($match[1]) ) ? $match[1] : '';
+
+    return $download_link;
+}
+
 function hkr_wpdm_get_categories( $id ) {
-    return join( ', ', wp_get_post_terms( $id, array('wpdmcategory'), array('fields' => 'names') ) );
+    $categories = wp_get_post_terms( $id, array('wpdmcategory'), array('fields' => 'names') );
+    $categories = array_filter( $categories, function($val) {
+        $exclude = array( 'Parents', 'Faculty &amp; Staff', 'Students' );
+        
+        return ( ! in_array($val, $exclude) );
+    });
+
+    return join( ', ', $categories );
 }
 
 /* Preview File Link */
