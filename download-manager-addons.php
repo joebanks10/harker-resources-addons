@@ -21,23 +21,35 @@ function hkr_wpdm_enqueue() {
     wp_enqueue_style( 'hkr-wpdm-style', plugins_url('css/style.css', __FILE__) );
 }
 
-add_action('template_redirect', 'hkr_wpdm_datatable_src');
+add_action( 'wp_ajax_hkr_wpdm_datatable_src', 'hkr_wpdm_ajax_datatable_src' );
+add_action( 'wp_ajax_nopriv_hkr_wpdm_datatable_src', 'hkr_wpdm_ajax_datatable_src' );
 
-// creates file with a serialized array that contains the data for wpDataTables
-function hkr_wpdm_datatable_src(){
+function hkr_wpdm_ajax_datatable_src(){
+    $output = serialize( hkr_wpdm_get_data() );
 
-    // get requested category
-    if( isset($_GET['category']) ) {
-        $categories = get_terms( array('wpdmcategory', 'post_tag') );
-        $category_slugs = array_map( function($term) {
-            return $term->slug;
-        }, $categories );
-        $key = array_search( $_GET['category'], $category_slugs, true );
-        $category_slug = ( $key !== false ) ? $category_slugs[$key] : '';
-    }
+    echo $output; die();
+}
+
+add_action( 'template_redirect', 'hkr_wpdm_datatable_src');
+
+function hkr_wpdm_datatable_src() {
+    $output = serialize( hkr_wpdm_get_data() );
+
+    @file_put_contents( plugin_dir_path( __FILE__ ) . 'data.php', $output );
+}
+
+function hkr_wpdm_get_data() {
+    // get requested category and tag
+    $category = get_query_var( 'wpdmcategory' );
+    $tag = get_query_var( 'tag' );
 
     // query data
-    $downloads = get_posts( array( "posts_per_page" => -1, "post_type" => "wpdmpro", "wpdmcategory" => $category_slug ) );
+    $downloads = get_posts( array( 
+        "posts_per_page" => -1, 
+        "post_type" => "wpdmpro", 
+        "wpdmcategory" => $category,
+        "tag" => $tag 
+    ));
 
     $output = array();
     foreach( $downloads as $download ) {
@@ -46,15 +58,14 @@ function hkr_wpdm_datatable_src(){
 
         $output[] = array(
             'Title' => get_permalink( $download->ID ) . '||' . $download->post_title,
-            'Categories' => hkr_wpdm_get_term_names( $download->ID, array('wpdmcategory'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ),
-            'Tags' => hkr_wpdm_get_term_names( $download->ID, array('post_tag') ),
+            'Categories' => join(', ', hkr_wpdm_get_post_term_names( $download->ID, array('wpdmcategory'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ) ),
+            'Tags' => join(', ', hkr_wpdm_get_post_term_names( $download->ID, array('post_tag') ) ),
             'Last Modified' => $download->post_modified,
             'Download' => $download_link
         );
     }
 
-    $output = serialize($output);
-    @file_put_contents( plugin_dir_path( __FILE__ ) . 'data.php', $output );
+    return $output;
 }
 
 function hkr_wpdm_get_download_url( $id ) {
@@ -65,13 +76,22 @@ function hkr_wpdm_get_download_url( $id ) {
     return $download_link;
 }
 
-function hkr_wpdm_get_term_names( $id, $taxonomy, $exclude = array() ) {
-    $terms = wp_get_post_terms( $id, $taxonomy, array('fields' => 'names') );
-    $terms = array_filter( $terms, function($val) use ($exclude) {
+function hkr_wpdm_get_term_slugs( $taxonomy ) {
+    $terms = get_terms( $taxonomy );
+    $term_slugs = array_map( function($term) {
+        return $term->slug;
+    }, $terms );
+
+    return $term_slugs;
+}
+
+function hkr_wpdm_get_post_term_names( $id, $taxonomy, $exclude = array() ) {
+    $term_names = wp_get_post_terms( $id, $taxonomy, array('fields' => 'names') );
+    $term_names = array_filter( $term_names, function($val) use ($exclude) {
         return ( ! in_array($val, $exclude) );
     });
 
-    return join( ', ', $terms );
+    return $term_names;
 }
 
 /* Preview File Link */
