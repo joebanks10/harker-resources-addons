@@ -58,4 +58,53 @@ function hkr_wpdm_taxonomies() {
         'show_admin_column' => true,
         '_builtin' => true,
     ) );
+
+    $labels = array(
+        'name'                       => _x( 'Owner', 'taxonomy general name' ),
+        'singular_name'              => _x( 'Owner', 'taxonomy singular name' ),
+        'search_items'               => __( 'Search Owners' ),
+        'popular_items'              => __( 'Popular Owners' ),
+        'all_items'                  => __( 'All Owners' ),
+        'parent_item'                => null,
+        'parent_item_colon'          => null,
+        'edit_item'                  => __( 'Edit Owner' ),
+        'update_item'                => __( 'Update Owner' ),
+        'add_new_item'               => __( 'Add New Owner' ),
+        'new_item_name'              => __( 'New Owner Name' ),
+        'separate_items_with_commas' => __( 'Separate owners with commas' ),
+        'add_or_remove_items'        => __( 'Add or remove owners' ),
+        'choose_from_most_used'      => __( 'Choose from the most used owners' ),
+        'not_found'                  => __( 'No owners found.' ),
+        'menu_name'                  => __( 'Owners' ),
+    );
+
+    $args = array(
+        'hierarchical'          => false,
+        'labels'                => $labels,
+        'public'                => false,
+        'show_ui'               => true,
+        'show_in_nav_menus'     => false,
+        'show_tagcloud'         => false,
+        'show_admin_column'     => true,
+        'rewrite'               => array( 'slug' => 'owner' ),
+    );
+
+    register_taxonomy( 'owner', array( 'post', 'hkr_link', 'wpdmpro' ), $args );
+}
+
+add_action('do_meta_boxes', 'hkr_wpdm_tax_metabox_priority', 10, 3);
+
+function hkr_wpdm_tax_metabox_priority( $post_type, $context, $post ) {
+
+    if ( ! in_array( $post_type, array( 'post', 'hkr_link', 'wpdmpro' ))) {
+        return;
+    }
+
+    if ( $context === 'side' ) {
+        global $wp_meta_boxes;
+
+        $ownerdiv = $wp_meta_boxes[$post_type][$context]['core']['tagsdiv-owner'];
+        unset( $wp_meta_boxes[$post_type][$context]['core']['tagsdiv-owner'] );
+        $wp_meta_boxes[$post_type][$context]['core'] = array('tagsdiv-owner' => $ownerdiv) + $wp_meta_boxes[$post_type][$context]['core'];
+    }
 }
