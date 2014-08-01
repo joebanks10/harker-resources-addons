@@ -27,24 +27,36 @@ function hkr_wpdm_get_data() {
     $tag = ( empty($tag) && isset($_GET['tag']) ) ? $_GET['tag'] : $tag;
 
     // query data
-    $downloads = get_posts( array( 
+    $entries = get_posts( array( 
         "posts_per_page" => -1, 
         "post_type" => array( 'post', 'hkr_link', 'wpdmpro' ), 
-        "cat" => $category,
+        "category" => $category,
         "tag" => $tag 
     ));
 
     $output = array();
-    foreach( $downloads as $download ) {
-        $url = hkr_wpdm_get_download_url( $download->ID );
-        $download_link = ( empty($url) ) ? '' : $url . '||Download';
+    foreach( $entries as $entry ) {
+
+        // get permalink
+        if ( $entry->post_type == 'hkr_link' ) {
+            $permalink = esc_url(get_post_meta( $entry->ID, '_hkr_wpdm_url', true ));
+        } else {
+            $permalink = esc_url(get_permalink( $entry->ID ));
+        }
+
+        // get action link
+        if ( $entry->post_type == 'wpdmpro' ) {
+            $action_link = esc_url(hkr_wpdm_get_download_url( $entry->ID )) . '||Download';
+        } else {
+            $action_link = '';
+        }
 
         $output[] = array(
-            'Title' => get_permalink( $download->ID ) . '||' . $download->post_title,
-            'Categories' => join(', ', hkr_wpdm_get_post_term_names( $download->ID, array('category'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ) ),
-            'Tags' => join(', ', hkr_wpdm_get_post_term_names( $download->ID, array('post_tag') ) ),
-            'Last Modified' => $download->post_modified,
-            'Download' => $download_link
+            'Title' => $permalink . '||' . $entry->post_title,
+            'Categories' => join(', ', hkr_wpdm_get_post_term_names( $entry->ID, array('category'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ) ),
+            'Tags' => join(', ', hkr_wpdm_get_post_term_names( $entry->ID, array('post_tag') ) ),
+            'Modified' => $entry->post_modified,
+            'Action' => $action_link
         );
     }
 
