@@ -14,7 +14,7 @@ add_action( 'template_redirect', 'hkr_wpdm_datatable_src');
 function hkr_wpdm_datatable_src() {
     $output = serialize( hkr_wpdm_get_data() );
 
-    @file_put_contents( plugin_dir_path( __FILE__ ) . 'data.php', $output );
+    @file_put_contents( plugin_dir_path( __FILE__ ) . '../data.php', $output );
 }
 
 function hkr_wpdm_get_data() {
@@ -37,7 +37,7 @@ function hkr_wpdm_get_data() {
     $output = array();
     foreach( $downloads as $download ) {
         $url = hkr_wpdm_get_download_url( $download->ID );
-        $download_link = ( empty($url) ) ? '||Expired' : $url . '||Download';
+        $download_link = ( empty($url) ) ? '' : $url . '||Download';
 
         $output[] = array(
             'Title' => get_permalink( $download->ID ) . '||' . $download->post_title,
