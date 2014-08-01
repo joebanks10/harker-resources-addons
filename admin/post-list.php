@@ -16,7 +16,6 @@ add_action( 'manage_wpdmpro_posts_columns' , 'hkr_wpdm_columns', 10, 2 );
 function hkr_wpdm_columns( $columns ) {
     unset( $columns['shortcode'] );
     unset( $columns['image'] );
-    $columns['owner'] = 'Owner';
 
     return $columns;
 }
@@ -24,11 +23,7 @@ function hkr_wpdm_columns( $columns ) {
 add_action( 'manage_wpdmpro_posts_custom_column' , 'hkr_wpdm_column_val', 10, 2 );
 
 function hkr_wpdm_column_val( $column, $post_id ) {
-    switch ( $column ) {
-        case 'owner' :
-            echo get_post_meta( $post_id, '_hkr_wpdm_owner', true );
-            break;
-    }
+    // reserved for custom columns
 }
 
 ?>
