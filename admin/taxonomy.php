@@ -5,7 +5,7 @@ add_action( 'init', 'hkr_wpdm_taxonomies', 20 );
 function hkr_wpdm_taxonomies() {
 
     // remove wpdmcategory
-    // register_taxonomy( 'wpdmcategory', '' );
+    register_taxonomy( 'wpdmcategory', '' );
 
     // re-register category and post tags to include links and downloads 
     // original code was copied from WordPress Core v3.9.1

@@ -19,18 +19,18 @@ function hkr_wpdm_datatable_src() {
 
 function hkr_wpdm_get_data() {
     // get requested category and tag
-    $category = get_query_var( 'wpdmcategory' );
+    $category = get_query_var( 'cat' );
     $tag = get_query_var( 'tag' );
 
     // check for url arguments if empty
-    $category = ( empty($category) && isset($_GET['wpdmcategory']) ) ? $_GET['wpdmcategory'] : $category;
+    $category = ( empty($category) && isset($_GET['cat']) ) ? $_GET['cat'] : $category;
     $tag = ( empty($tag) && isset($_GET['tag']) ) ? $_GET['tag'] : $tag;
 
     // query data
     $downloads = get_posts( array( 
         "posts_per_page" => -1, 
-        "post_type" => "wpdmpro", 
-        "wpdmcategory" => $category,
+        "post_type" => array( 'post', 'hkr_link', 'wpdmpro' ), 
+        "cat" => $category,
         "tag" => $tag 
     ));
 
@@ -41,7 +41,7 @@ function hkr_wpdm_get_data() {
 
         $output[] = array(
             'Title' => get_permalink( $download->ID ) . '||' . $download->post_title,
-            'Categories' => join(', ', hkr_wpdm_get_post_term_names( $download->ID, array('wpdmcategory'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ) ),
+            'Categories' => join(', ', hkr_wpdm_get_post_term_names( $download->ID, array('category'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ) ),
             'Tags' => join(', ', hkr_wpdm_get_post_term_names( $download->ID, array('post_tag') ) ),
             'Last Modified' => $download->post_modified,
             'Download' => $download_link
