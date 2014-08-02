@@ -51,10 +51,26 @@ function hkr_wpdm_get_data() {
             $action_link = '';
         }
 
+        // get categories and tags
+        $post_categories = hkr_wpdm_get_post_term_names( $entry->ID, array('category'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) );
+        $post_tags = hkr_wpdm_get_post_term_names( $entry->ID, array('post_tag') );
+
+        // append post type to $post_tags
+        switch ( $entry->post_type ) {
+            case 'post':
+                $post_tags[] = 'Article';
+                break;
+            case 'hkr_link':
+                $post_tags[] = 'Link';
+                break;
+            case 'wpdmpro':
+                $post_tags[] = 'File';
+        }
+
         $output[] = array(
             'Title' => $permalink . '||' . $entry->post_title,
-            'Categories' => join(', ', hkr_wpdm_get_post_term_names( $entry->ID, array('category'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) ) ),
-            'Tags' => join(', ', hkr_wpdm_get_post_term_names( $entry->ID, array('post_tag') ) ),
+            'Categories' => join(', ', $post_categories ),
+            'Tags' => join(', ', $post_tags ),
             'Modified' => $entry->post_modified,
             'Action' => $action_link
         );
