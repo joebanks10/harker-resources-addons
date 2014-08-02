@@ -58,13 +58,13 @@ function hkr_wpdm_get_data() {
         // append post type to $post_tags
         switch ( $entry->post_type ) {
             case 'post':
-                $post_tags[] = 'Article';
+                $post_tags[] = 'Articles';
                 break;
             case 'hkr_link':
-                $post_tags[] = 'Link';
+                $post_tags[] = 'Links';
                 break;
             case 'wpdmpro':
-                $post_tags[] = 'File';
+                $post_tags[] = 'Files';
         }
 
         $output[] = array(
