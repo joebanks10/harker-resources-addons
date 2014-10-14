@@ -16,12 +16,3 @@ function hkr_wpdm_get_term_slugs( $taxonomy ) {
 
     return $term_slugs;
 }
-
-function hkr_wpdm_get_post_term_names( $id, $taxonomy, $exclude = array() ) {
-    $term_names = wp_get_post_terms( $id, $taxonomy, array('fields' => 'names') );
-    $term_names = array_filter( $term_names, function($val) use ($exclude) {
-        return ( ! in_array($val, $exclude) );
-    });
-
-    return $term_names;
-}

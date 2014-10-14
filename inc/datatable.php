@@ -52,8 +52,16 @@ function hkr_wpdm_get_data() {
         }
 
         // get categories and tags
-        $post_categories = hkr_wpdm_get_post_term_names( $entry->ID, array('category'), array( 'Parents', 'Faculty &amp; Staff', 'Students' ) );
-        $post_tags = hkr_wpdm_get_post_term_names( $entry->ID, array('post_tag') );
+        $post_categories = wp_get_post_terms( $entry->ID, array('category'), array('fields' => 'names') );
+        $post_tags = wp_get_post_terms( $entry->ID, array('post_tag'), array('fields' => 'names') );
+
+        if ( in_array('_outdated', $post_tags) ) {
+            continue;
+        }
+
+        // filter out hidden terms
+        $post_categories = array_filter( $post_categories, 'hkr_wpdm_filter_hidden_terms' );
+        $post_tags = array_filter( $post_tags, 'hkr_wpdm_filter_hidden_terms' );
 
         // append post type to $post_tags
         switch ( $entry->post_type ) {
@@ -71,10 +79,15 @@ function hkr_wpdm_get_data() {
             'Title' => $permalink . '||' . $entry->post_title,
             'Categories' => join(', ', $post_categories ),
             'Tags' => join(', ', $post_tags ),
+            'Keywords' => '',
             'Modified' => $entry->post_modified,
             'Action' => $action_link
         );
     }
 
     return $output;
+}
+
+function hkr_wpdm_filter_hidden_terms( $val ) {
+    return ( ! preg_match( '/^_/', $val ) );
 }
