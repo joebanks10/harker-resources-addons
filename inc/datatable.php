@@ -1,5 +1,64 @@
 <?php 
 
+// filter has been inserted in the wpDataTables plugin, 
+// under the function wpdatatable_shortcode_handler, line 242
+add_filter( 'hkr_datatable_src_url', 'hkr_datatable_src_url_args');
+
+function hkr_datatable_src_url_args( $url ) {
+    // get requested category and tag
+    $category = get_query_var( 'cat' );
+    $tag = get_query_var( 'tag' );
+
+    return $url . "&cat=$category&tag=$tag";
+}
+
+add_action( 'init', 'hkr_remove_genesis_loop' );
+
+function hkr_remove_genesis_loop() {
+    remove_action( 'genesis_loop', 'genesis_do_loop' ); 
+}
+
+add_action( 'genesis_loop', 'hkr_print_datatable' ); 
+
+function hkr_print_datatable() {
+    if ( is_category() || is_tag() ) {
+        if ( is_category() ) {
+            $shortcode = get_option( 'hkr_category_datatable' );
+        } else if ( is_tag() ) {
+            $shortcode = get_option( 'hkr_tag_datatable' );
+        }
+        
+        if ( empty( $shortcode ) ) {
+            genesis_do_loop();
+            return;
+        }
+
+        echo '<div class="hkr-wpdatatable">' . do_shortcode( $shortcode ) . '</div>';
+    } else {
+        genesis_do_loop();
+    }
+}
+
+add_action( 'init', 'hkr_remove_category_title' );
+
+function hkr_remove_category_title() {
+    remove_action( 'genesis_before_loop', 'hkr_category_title', 1 );
+}
+
+add_action( 'genesis_before_loop', 'hkr_resource_category_title', 1 );
+
+function hkr_resource_category_title() {
+    if ( is_category() ) {
+        $output = '<h1 class="resource-term-title">' . single_cat_title('', false) . ' Resources</h1>';
+    } elseif ( is_tag() ) {
+        $output = '<h1 class="resource-term-title">Resources Tagged With: ' . single_cat_title('', false) . '</h1>';
+    }
+
+    if ( isset($output) ) {
+        echo apply_filters( 'hkr_resource_term_title', $output );
+    }
+}
+
 add_action( 'wp_ajax_hkr_wpdm_datatable_src', 'hkr_wpdm_ajax_datatable_src' );
 add_action( 'wp_ajax_nopriv_hkr_wpdm_datatable_src', 'hkr_wpdm_ajax_datatable_src' );
 
@@ -90,4 +149,15 @@ function hkr_wpdm_get_data() {
 
 function hkr_wpdm_filter_hidden_terms( $val ) {
     return ( ! preg_match( '/^_/', $val ) );
+}
+
+add_filter( 'genesis_post_categories_shortcode', 'hkr_remove_underscores' );
+add_filter( 'genesis_post_tags_shortcode', 'hkr_remove_underscores' );
+add_filter( 'genesis_post_terms_shortcode', 'hkr_remove_underscores' );
+add_filter( 'single_cat_title', 'hkr_remove_underscores' );
+add_filter( 'single_tag_title', 'hkr_remove_underscores' );
+add_filter( 'single_term_title', 'hkr_remove_underscores' );
+
+function hkr_remove_underscores( $output ) {
+    return str_replace( '_', '', $output );
 }

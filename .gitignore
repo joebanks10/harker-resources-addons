@@ -1,6 +1,7 @@
 data.php
 backup/
 tmp/
+temp/
 
 # Ignore other unneeded files.
 database.yml

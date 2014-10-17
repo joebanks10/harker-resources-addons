@@ -16,6 +16,7 @@ include_once( dirname( __FILE__ ) . '/admin/metabox.php' );
 include_once( dirname( __FILE__ ) . '/admin/post-list.php' );
 include_once( dirname( __FILE__ ) . '/admin/taxonomy.php' );
 include_once( dirname( __FILE__ ) . '/admin/link.php' );
+include_once( dirname( __FILE__ ) . '/admin/settings.php' );
 
 register_activation_hook( __FILE__, 'hkr_wpdm_activate' );
 
