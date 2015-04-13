@@ -29,7 +29,18 @@
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed7127', endColorstr='#d35f1a',GradientType=0 ); /* IE6-9 */
 }
 
-.page .entry-content h2:first-child {
+.w3eden .wpdm-filelist .btn-primary,
+.w3eden .wpdm-filelist .btn-primary:hover {
+    color: #428BCA !important;
+    background-color: transparent;
+    border-color: #ddd;
+}
+
+.w3eden .wpdm-filelist .btn-primary .fa {
+    display: none;
+}
+
+.hkr-wpdatatable h2:first-child {
     display: none;
 }
 

@@ -6,6 +6,7 @@
 
     register_setting( 'reading', 'hkr_category_datatable' );
     register_setting( 'reading', 'hkr_tag_datatable' );
+    register_setting( 'reading', 'hkr_tax_datatable' );
     
     add_settings_section(
         'hkr_datatable_section',
@@ -29,6 +30,14 @@
         'reading', 
         'hkr_datatable_section'
     );
+
+    add_settings_field(
+        'hkr_tax_datatable',
+        'Custom Taxonomy DataTable Shortcode',
+        'hkr_tax_datatable_input',
+        'reading', 
+        'hkr_datatable_section'
+    );
  }
 
 function hkr_datatable_section_text() {
@@ -41,4 +50,8 @@ function hkr_category_datatable_input() {
 
 function hkr_tag_datatable_input() {
     echo '<input name="hkr_tag_datatable" id="hkr_tag_datatable" type="text" value="' . get_option( 'hkr_tag_datatable' ) . '" />';
+}
+
+function hkr_tax_datatable_input() {
+    echo '<input name="hkr_tax_datatable" id="hkr_tax_datatable" type="text" value="' . get_option( 'hkr_tax_datatable' ) . '" />';
 }

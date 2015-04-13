@@ -21,11 +21,13 @@ function hkr_remove_genesis_loop() {
 add_action( 'genesis_loop', 'hkr_print_datatable' ); 
 
 function hkr_print_datatable() {
-    if ( is_category() || is_tag() ) {
+    if ( is_category() || is_tag() || is_tax() ) {
         if ( is_category() ) {
             $shortcode = get_option( 'hkr_category_datatable' );
         } else if ( is_tag() ) {
             $shortcode = get_option( 'hkr_tag_datatable' );
+        } else if ( is_tax() ) {
+            $shortcode = get_option( 'hkr_tax_datatable' );
         }
         
         if ( empty( $shortcode ) ) {
