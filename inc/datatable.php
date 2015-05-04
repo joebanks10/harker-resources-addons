@@ -6,14 +6,28 @@
 add_filter( 'wpdatatables_filter_table_metadata', 'hkr_datatable_src_url_args');
 
 function hkr_datatable_src_url_args( $table_data ) {
-    $url = $table_data['content'];
+    // table_data['content'] contains url of ajax request
 
-    // get requested category and tag
+    // get requested taxonomies from client url
     $category = get_query_var( 'cat' );
     $tag = get_query_var( 'tag' );
     $owner = get_query_var( 'owner' );
 
-    $table_data['content'] = $url . "&cat=$category&tag=$tag&owner=$owner";
+    // get args from wpDataTables data url
+    $wdt_args = parse_url($table_data['content'], PHP_URL_QUERY);
+    if ( $wdt_args === false ) {
+        return $table_data;
+    }
+
+    if ( strpos($wdt_args, 'cat') === false && $category ) {
+        $table_data['content'] .= "&cat=$category";
+    }
+    if ( strpos($wdt_args, 'tag') === false && $tag ) {
+        $table_data['content'] .= "&tag=$tag";
+    }
+    if ( strpos($wdt_args, 'owner') === false && $owner ) {
+        $table_data['content'] .= "&owner=$owner";
+    }
 
     return $table_data;
 }
