@@ -43,7 +43,7 @@ add_action( 'template_redirect', 'hkr_wpdm_link_redirect' );
 
 function hkr_wpdm_link_redirect( $post ) {
     global $post;
-    if ( get_post_type($post->ID) === 'hkr_link' ) {
+    if ( ! is_feed() && get_post_type($post->ID) === 'hkr_link' ) {
         $url = esc_url_raw( get_post_meta( $post->ID, '_hkr_wpdm_url', true ) );
         wp_redirect($url);
         exit();
