@@ -1,5 +1,11 @@
 <?php 
 
+add_filter( 'wpdatatables_filter_table_title', 'hkr_remove_datatable_header');
+
+function hkr_remove_datatable_header() {
+    return '';
+}
+
 // OLD: filter has been inserted in the wpDataTables plugin, 
 // under the function wpdatatable_shortcode_handler, line 242
 // add_filter( 'hkr_datatable_src_url', 'hkr_datatable_src_url_args');
@@ -71,11 +77,18 @@ add_action( 'genesis_before_loop', 'hkr_resource_category_title', 1 );
 
 function hkr_resource_category_title() {
     if ( is_category() ) {
-        $output = '<h1 class="resource-term-title">' . single_cat_title('', false) . ' Resources</h1>';
+        $output = '<h1 class="resource-term-title">' . single_cat_title('', false) . ' Resources';
+        if ( is_tag() ) {
+            $tag = get_term_by( 'slug', get_query_var( 'tag' ), 'post_tag' );
+            if ( $tag ) {
+                $output .= '  tagged with "' . $tag->name . '"';
+            }
+        }
+        $output .= '</h1>';
     } elseif ( is_tag() ) {
-        $output = '<h1 class="resource-term-title">Resources Tagged: ' . single_cat_title('', false) . '</h1>';
+        $output = '<h1 class="resource-term-title">Resources tagged with "' . single_tag_title('', false) . '"</h1>';
     } elseif ( is_tax('owner') ) {
-        $output = '<h1 class="resource-term-title">Resources Owned By: ' . single_cat_title('', false) . '</h1>';
+        $output = '<h1 class="resource-term-title">Resources owned by ' . single_term_title('', false) . '</h1>'; 
     }
 
     if ( isset($output) ) {
@@ -89,7 +102,9 @@ add_action( 'wp_ajax_nopriv_hkr_wpdm_datatable_src', 'hkr_wpdm_ajax_datatable_sr
 function hkr_wpdm_ajax_datatable_src(){
     $output = serialize( hkr_wpdm_get_data() );
 
-    echo $output; die();
+    echo $output; 
+
+    wp_die();
 }
 
 add_action( 'template_redirect', 'hkr_wpdm_datatable_src');
@@ -116,7 +131,8 @@ function hkr_wpdm_get_data() {
         "posts_per_page" => -1, 
         "post_type" => array( 'post', 'hkr_link', 'wpdmpro' ), 
         "category" => $category,
-        "tag" => $tag
+        "tag" => $tag,
+        "suppress_filters" => false
     );
 
     if ( $owner ) {

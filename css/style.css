@@ -32,7 +32,7 @@
 .w3eden .wpdm-filelist .btn-primary,
 .w3eden .wpdm-filelist .btn-primary:hover {
     color: #428BCA !important;
-    background-color: transparent;
+    background: transparent;
     border-color: #ddd;
 }
 
