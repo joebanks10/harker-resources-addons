@@ -81,7 +81,7 @@ function hkr_wpdm_taxonomies() {
     $args = array(
         'hierarchical'          => false,
         'labels'                => $labels,
-        'public'                => false,
+        'public'                => true,
         'show_ui'               => true,
         'show_in_nav_menus'     => false,
         'show_tagcloud'         => false,
