@@ -78,15 +78,14 @@ add_action( 'genesis_before_loop', 'hkr_resource_category_title', 1 );
 function hkr_resource_category_title() {
     if ( is_category() ) {
         $output = '<h1 class="resource-term-title">' . single_cat_title('', false) . ' Resources';
+        
         if ( is_tag() ) {
-            $tag = get_term_by( 'slug', get_query_var( 'tag' ), 'post_tag' );
-            if ( $tag ) {
-                $output .= '  tagged with "' . $tag->name . '"';
-            }
+            $output .= '  tagged with ' . hkr_get_tag_title();
         }
+
         $output .= '</h1>';
     } elseif ( is_tag() ) {
-        $output = '<h1 class="resource-term-title">Resources tagged with "' . single_tag_title('', false) . '"</h1>';
+        $output = '<h1 class="resource-term-title">Resources tagged with ' . hkr_get_tag_title() . '</h1>';
     } elseif ( is_tax('owner') ) {
         $output = '<h1 class="resource-term-title">Resources owned by ' . single_term_title('', false) . '</h1>'; 
     }
@@ -94,6 +93,41 @@ function hkr_resource_category_title() {
     if ( isset($output) ) {
         echo apply_filters( 'hkr_resource_term_title', $output );
     }
+}
+
+function hkr_get_tag_title() {
+    $output = '';
+
+    if ( ! is_tag() ) {
+        return $output;
+    }
+
+    $tag_query = get_query_var( 'tag' );
+    preg_match('/[\+,]/', $tag_query, $delimiter);
+    
+    if ( isset($delimiter[0]) ) {
+        $tags = explode($delimiter[0], $tag_query);
+
+        if ($delimiter[0] === ',') {
+            $output_delimiter = '" or "';
+        } elseif ($delimiter[0] === '+') {
+            $output_delimiter = '" and "';
+        }
+    } else {
+        $tags = array($tag_query);
+        $output_delimiter = ', ';
+    }
+
+    $tag_names = array();
+    foreach ($tags as $tag_slug) {
+        if ( $tag_object = get_term_by( 'slug', $tag_slug, 'post_tag' ) ) {
+            $tag_names[] = $tag_object->name;
+        }
+    }
+
+    $output = '"' . join($output_delimiter, $tag_names) . '"';
+
+    return $output;
 }
 
 add_action( 'wp_ajax_hkr_wpdm_datatable_src', 'hkr_wpdm_ajax_datatable_src' );
