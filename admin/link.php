@@ -33,7 +33,7 @@ function hkr_wpdm_links_init() {
         'hierarchical'       => false,
         'menu_position'      => 15,
         'menu_icon'          => 'dashicons-admin-links',
-        'supports'           => array( 'title', 'author', 'excerpt' )
+        'supports'           => array( 'title', 'author', 'editor', 'excerpt' )
     );
 
     register_post_type( 'hkr_link', $args );
@@ -45,7 +45,10 @@ function hkr_wpdm_link_redirect( $post ) {
     global $post;
     if ( ! is_feed() && get_post_type($post->ID) === 'hkr_link' ) {
         $url = esc_url_raw( get_post_meta( $post->ID, '_hkr_wpdm_url', true ) );
-        wp_redirect($url);
-        exit();
+
+        if( wp_redirect($url) ) {
+            exit();
+        } 
+
     }
 }

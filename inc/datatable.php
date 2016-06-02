@@ -77,13 +77,12 @@ add_action( 'genesis_before_loop', 'hkr_resource_category_title', 1 );
 
 function hkr_resource_category_title() {
     if ( is_category() ) {
-        $output = '<h1 class="resource-term-title">' . single_cat_title('', false) . ' Resources';
+        $output = '<h1 class="resource-term-title">' . single_cat_title('', false) . ' Resources</h1>';
         
         if ( is_tag() ) {
-            $output .= '  tagged with ' . hkr_get_tag_title();
+            $output .= '<h2>Tagged with ' . hkr_get_tag_title() . '</h2>';
         }
 
-        $output .= '</h1>';
     } elseif ( is_tag() ) {
         $output = '<h1 class="resource-term-title">Resources tagged with ' . hkr_get_tag_title() . '</h1>';
     } elseif ( is_tax('owner') ) {
@@ -109,9 +108,9 @@ function hkr_get_tag_title() {
         $tags = explode($delimiter[0], $tag_query);
 
         if ($delimiter[0] === ',') {
-            $output_delimiter = '" or "';
+            $output_delimiter = ' or ';
         } elseif ($delimiter[0] === '+') {
-            $output_delimiter = '" and "';
+            $output_delimiter = ' and ';
         }
     } else {
         $tags = array($tag_query);
@@ -121,11 +120,12 @@ function hkr_get_tag_title() {
     $tag_names = array();
     foreach ($tags as $tag_slug) {
         if ( $tag_object = get_term_by( 'slug', $tag_slug, 'post_tag' ) ) {
-            $tag_names[] = $tag_object->name;
+            $tag_names[] = '"' . $tag_object->name . '"';
         }
     }
 
-    $output = '"' . join($output_delimiter, $tag_names) . '"';
+    $output = join(', ', $tag_names);
+    $output = hkr_str_replace_last(', ', $output_delimiter, $output);
 
     return $output;
 }

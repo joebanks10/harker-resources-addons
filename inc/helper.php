@@ -16,3 +16,13 @@ function hkr_wpdm_get_term_slugs( $taxonomy ) {
 
     return $term_slugs;
 }
+
+function hkr_str_replace_last($search, $replace, $subject) {
+    $pos = strrpos($subject, $search);
+
+    if ($pos !== false) {
+        $subject = substr_replace($subject, $replace, $pos, strlen($search));
+    }
+
+    return $subject;
+}

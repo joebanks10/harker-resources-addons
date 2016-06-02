@@ -2,11 +2,13 @@
 
     $(window).load(function(){ 
 
-        var $label = $('.dataTables_filter label'),
-            $input = $('.dataTables_filter input');
+        var $table = $('.wpDataTablesWrapper'),
+            $label = $('.dataTables_filter label'),
+            $input = $('.dataTables_filter input').detach().attr('placeholder', 'Search With Any Keyword'),
+            $length = $('.dataTables_length');
 
-        $input.attr('placeholder', 'Search With Any Keyword');
         $label.html($input);
+        $table.append($length);
 
     });
 

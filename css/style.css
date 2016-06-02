@@ -78,12 +78,10 @@
     color: #333;
 }
 
-.wpdt-header {
-    margin-bottom: -21px;
-}
-
 body .wpDataTablesWrapper .dataTables_length {
-    float: right;
+    float: none;
+    display: block;
+    clear: both;
 }
 
 body .wpDataTablesWrapper .dataTables_filter {
