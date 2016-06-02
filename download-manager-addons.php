@@ -27,6 +27,7 @@ function hkr_wpdm_activate() {
 add_action( 'wp_enqueue_scripts', 'hkr_wpdm_enqueue' );
 
 function hkr_wpdm_enqueue() {
+    wp_enqueue_script( 'hkr-wpdm-addons', plugins_url('js/scripts.js', __FILE__), array('jquery'));
     wp_enqueue_style( 'hkr-wpdm-style', plugins_url('css/style.css', __FILE__) );
 }
 
