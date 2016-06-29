@@ -47,7 +47,7 @@ function hkr_wpdm_link_redirect( $post ) {
         $url = esc_url_raw( get_post_meta( $post->ID, '_hkr_wpdm_url', true ) );
 
         if( wp_redirect($url) ) {
-            exit();
+            return;
         } 
 
     }

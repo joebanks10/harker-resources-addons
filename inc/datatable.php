@@ -185,11 +185,7 @@ function hkr_wpdm_get_data() {
     foreach( $entries as $entry ) {
 
         // get permalink
-        if ( $entry->post_type == 'hkr_link' ) {
-            $permalink = esc_url(get_post_meta( $entry->ID, '_hkr_wpdm_url', true ));
-        } else {
-            $permalink = esc_url(get_permalink( $entry->ID ));
-        }
+        $permalink = esc_url(get_permalink( $entry->ID ));
 
         // get action link
         if ( $entry->post_type == 'wpdmpro' ) {
