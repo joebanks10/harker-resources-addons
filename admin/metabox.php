@@ -68,10 +68,11 @@ function hkr_wpdm_save_metadata( $post_id ) {
 
 /* View Files Meta Box */
 function hkr_wpdm_view_files_meta_box( $post ) {
-    $package = get_post( $post->ID, ARRAY_A );
-    $package = array_merge( $package, wpdm_custom_data( $package['ID'] ));
-    
-    $preview = wpdm_doc_preview( $package );
+    // $package = get_post( $post->ID, ARRAY_A );
+    // $package = array_merge( $package, wpdm_custom_data( $package['ID'] ));
+
+    $package = wpdm_get_package($post->ID);
+    $preview = hkr_wpdm_get_doc_preview($package);
 
     if ( empty($preview) ) {
         echo '<p>Please attach the file(s) and save the package to view.</p>';

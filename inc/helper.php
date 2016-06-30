@@ -1,11 +1,17 @@
 <?php
 
 function hkr_wpdm_get_download_url( $id ) {
-    $download_link = wpdm_get_download_link( $id );
-    preg_match( '/href=\'(.*?)\'/', $download_link, $match);
-    $download_link = ( isset($match[1]) ) ? $match[1] : '';
+    // $download_link = wpdm_get_download_link( $id );
+    // preg_match( '/href=\'(.*?)\'/', $download_link, $match);
+    // $download_link = ( isset($match[1]) ) ? $match[1] : '';
+
+    $download_link = \WPDM\Package::getMasterDownloadURL($id);
 
     return $download_link;
+}
+
+function hkr_wpdm_get_doc_preview($package) {
+    return \WPDM\Package::docPreview($package);
 }
 
 function hkr_wpdm_get_term_slugs( $taxonomy ) {

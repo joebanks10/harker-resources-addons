@@ -141,7 +141,7 @@ function hkr_wpdm_ajax_datatable_src(){
     wp_die();
 }
 
-add_action( 'template_redirect', 'hkr_wpdm_datatable_src');
+// add_action( 'template_redirect', 'hkr_wpdm_datatable_src');
 
 function hkr_wpdm_datatable_src() {
     $output = serialize( hkr_wpdm_get_data() );
